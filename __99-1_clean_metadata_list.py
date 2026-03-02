@@ -6,7 +6,7 @@ import os
 # ================= 配置區域 =================
 # 1. 自定義目錄與檔名
 INPUT_DIR = 'ignore'
-INPUT_FILENAME = 'asiaKol_186-199_N=13_videoOnly.xlsx'  # 請修改為你的檔名
+INPUT_FILENAME = 'AsiaKol_N=17_chiu_videoOnly.xlsx'  # 請修改為你的檔名
 OUTPUT_DIR = r"ignore/ouput/todo_list"
 filename_without_ext = os.path.splitext(INPUT_FILENAME)[0]
 OUTPUT_FILENAME = f"{filename_without_ext}.csv"
