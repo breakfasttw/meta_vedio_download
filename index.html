@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>🎬 M 影片下載</title>
+    <style>
+        /* 深色模式樣式 */
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            padding: 30px; 
+            background-color: #18191a; 
+            color: #e4e6eb; 
+            line-height: 1.6;
+        }
+        .container { 
+            max-width: 900px; 
+            margin: 0 auto; 
+            background: #242526; 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5); 
+        }
+        h1 { font-size: 22px; color: #2e89ff; margin-top: 0; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-size: 14px; color: #b0b3b8; }
+        
+        input[type="text"], textarea { 
+            width: 100%; 
+            background-color: #3a3b3c; 
+            border: 1px solid #4e4f50; 
+            border-radius: 6px; 
+            padding: 10px; 
+            color: #e4e6eb; 
+            font-family: 'Consolas', monospace;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus, textarea:focus { outline: 2px solid #2e89ff; border-color: transparent; }
+        
+        textarea { height: 200px; resize: vertical; }
+        
+        .controls { 
+            margin-top: 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            flex-wrap: wrap;
+        }
+        
+        button { 
+            border: none; 
+            padding: 12px 24px; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            transition: opacity 0.2s;
+        }
+        #startBtn { background-color: #2e89ff; color: white; }
+        #stopBtn { background-color: #f02849; color: white; display: none; }
+        button:hover { opacity: 0.9; }
+        button:disabled { background-color: #4e4f50; cursor: not-allowed; }
+
+        #statusDisplay { font-weight: bold; font-size: 15px; color: #45bd62; }
+        
+        #log { 
+            margin-top: 20px; 
+            height: 300px; 
+            border: 1px solid #3e4042; 
+            background: #1c1e21; 
+            padding: 15px; 
+            overflow-y: auto; 
+            font-size: 13px; 
+            border-radius: 8px; 
+        }
+        .log-entry { 
+            padding: 4px 0;
+            border-bottom: 1px solid #2f3031; 
+            display: flex;
+            gap: 10px;
+        }
+        .time-stamp { color: #b0b3b8; min-width: 85px; }
+        .log-info { color: #e4e6eb; }
+        .log-error { color: #f02849; font-weight: bold; }
+        .log-success { color: #45bd62; }
+        .log-warn { color: #f7b928; }
+        p {font-size: 13px; color:#bdbec0 ;}
+        .text-indent2 {text-indent: 2em;}
+        .text-indent1 {text-indent: 1em;}
+        .parameters-zone{ background-color: #19344f; padding: 8px; margin: 8px;}
+        li {font-size: 13px}
+        .text-warning {color: #915521; }
+        .text-information {color: #338afc; font-weight: bold;}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1> M Vedio Donwload</h1>
+
+    <div class="setting-info">
+        <p class="">⚙️ 手動設定</p>
+        <p class="text-indent1">要用<span class="text-information">已登入 FB 的瀏覽器開啟 HTML</span> (不用開著 FB)，且要先「1. 關閉下載前詢問位置」，並「2.允許彈出視窗」</p>
+        <p class="text-indent1">1. 輸入"chrome://settings/downloads" <span class="text-information">關閉「下載每個檔案前先詢問儲存位置」</span>； 建議暫時把【位置】從「Downloads」變更為 <span class="text-information">乾淨的資料夾路徑</span></p>
+        <p class="text-indent1">2. 設定 > 隱私權和安全性 > 網站設定 > 允許彈出式視窗與重新導向：貼上 <span class="text-information">{  html 執行頁面那串 url } </span></p>
+        <p class="text-indent2">用新瀏覽器或新的 index 路徑執行時，一定要先守在瀏覽器旁邊點選【一律允許】，否則會只下載一部影片</p>
+        <p>⚠️ 注意事項</p>
+        <p class="text-indent1 text-warning">執行過程中，在 Chrome 作業的游標會一直被目標瀏覽器搶走，建議同一部電腦先用 Edge 或 Firefox 做事情</p>
+    </div>
+
+    <div class="parameters-zone">
+        <p class="text-indent1">當前程式參數設定</p>
+        <ul id = "sleepParameters">
+            
+        </ul>
+    </div>
+    
+    <div class="input-group">
+        <label for="taskName">1. 網紅名稱 (貼正在執行的網紅名稱，英數版本)</label>
+        <input type="text" id="taskName" placeholder="填入username，例如 2uncle987 (不能填「嘎嫂二伯」)">
+    </div>
+
+    <div class="input-group">
+        <label for="startIndex">2. csv起始筆數，以利 Log 記錄每一筆的執行結果，填入 { 起始的 csv行數 - 1 (表頭)}</label>
+        <input type="text" id="startIndex" placeholder="本次如果從第 27 筆開始執行就填 27">
+    </div>
+
+    <div class="input-group">
+        <label for="urlInput">3. 貼入 URL 清單 (從 CSV 直接複製貼上多筆，一行是一個網址)</label>
+        <textarea id="urlInput" placeholder="https://..."></textarea>
+    </div>
+    
+    <div class="controls">
+        <button id="startBtn">開始下載</button>
+        <button id="stopBtn">停止</button>
+        <button id="downloadLogBtn" title="結尾會加上_當前的時間戳，不用擔心被覆蓋"> 下載目前 Log ( 不會中斷程式 )</button>
+        <span id="statusDisplay">待機中</span>
+    </div>
+
+    <div id="log">
+        <div class="log-entry"><span class="time-stamp">系統</span><span class="log-info">等待指令中...</span></div>
+    </div>
+</div>
+
+<script>
+    const urlInput = document.getElementById('urlInput');
+    const taskNameInput = document.getElementById('taskName');
+    const startIndexInput = document.getElementById('startIndex');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const downloadLogBtn = document.getElementById('downloadLogBtn');
+    const statusDisplay = document.getElementById('statusDisplay');
+    const logArea = document.getElementById('log');
+
+    let isRunning = false; // 控制開關
+
+    // sleep 延遲邏輯
+    // ====================手動填寫區=========================
+    const smallSleepStart = 5; // 小休息起始 random 秒數，強制每筆小休息
+    const smallSleepEnd = 10;
+    const bigSleepStart = 60; // 大休息起始 random 秒數，強制每 {bigSleepAmount} 筆大休息 
+    const bigSleepEnd = 80;
+    const bigSleepAmount = 20; // 每幾筆要大休息一次
+    // ====================手動填寫區=========================
+
+    document.getElementById('sleepParameters').innerHTML = `<li>小休息 (每筆) Random <span class = "text-information">${smallSleepStart} - ${smallSleepEnd} </span> 秒 ; 大休息 (每 <span class = "text-information"> ${bigSleepAmount} </span> 筆) Random <span class = "text-information"> ${bigSleepStart} -${bigSleepEnd} </span> 秒</li>`;
+
+
+    // 格式化時間：HH:MM:SS
+    function getTimeStr() {
+        const now = new Date();
+        return now.getHours().toString().padStart(2, '0') + ":" + 
+               now.getMinutes().toString().padStart(2, '0') + ":" + 
+               now.getSeconds().toString().padStart(2, '0');
+    }
+
+    // 格式化時間戳：YYYYMMDDHHMMSS
+    function getFullTimestamp() {
+        const now = new Date();
+        return now.getFullYear() + 
+               (now.getMonth() + 1).toString().padStart(2, '0') +
+               now.getDate().toString().padStart(2, '0') +
+               now.getHours().toString().padStart(2, '0') +
+               now.getMinutes().toString().padStart(2, '0') +
+               now.getSeconds().toString().padStart(2, '0');
+    }
+
+    function addLog(message, type = 'info') {
+        const div = document.createElement('div');
+        div.className = `log-entry log-${type}`;
+        const timeStr = getTimeStr();
+        
+        div.innerHTML = `<span class="time-stamp">[${timeStr}]</span><span class="log-text">${message}</span>`;
+        logArea.appendChild(div);
+        logArea.scrollTop = logArea.scrollHeight;
+    }
+
+    const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+    const getRandom = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+
+    // --- 新功能：下載 Log ---
+    downloadLogBtn.onclick = () => {
+        const taskName = taskNameInput.value.trim() || "Task";
+        const timestamp = getFullTimestamp();
+        const fileName = `${taskName}_${timestamp}.txt`;
+
+        // 提取所有 log 條目
+        const entries = logArea.querySelectorAll('.log-entry');
+        let fullText = `任務名稱: ${taskName}\n產生時間: ${new Date().toLocaleString()}\n-----------------------------------\n`;
+        
+        entries.forEach(entry => {
+            const time = entry.querySelector('.time-stamp').innerText;
+            const text = entry.querySelector('.log-text') ? entry.querySelector('.log-text').innerText : entry.innerText;
+            fullText += `${time} ${text}\n`;
+        });
+
+        // 建立 Blob 並觸發下載
+        const blob = new Blob([fullText], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        console.log(`Log 已存為: ${fileName}`);
+    };
+
+    // 停止按鈕邏輯
+    stopBtn.onclick = () => {
+        isRunning = false;
+        addLog("🛑 收到終止指令！將在目前步驟結束後停止程式。", "error");
+        statusDisplay.innerText = "目前狀態：正在終止...";
+        stopBtn.disabled = true;
+    };
+
+    startBtn.onclick = async () => {
+        const content = urlInput.value.trim();
+        const taskName = taskNameInput.value.trim() || "未命名任務";
+        const urls = content.split(/\s+/).filter(u => u.startsWith('http'));
+        const startNum = parseInt(startIndexInput.value) || 1;
+        
+        if (urls.length === 0) {
+            alert("請貼入網址！");
+            return;
+        }
+
+        isRunning = true;
+        startBtn.disabled = true;
+        stopBtn.style.display = "inline-block";
+        stopBtn.disabled = false;
+        
+        addLog(`🚀 任務「${taskName}」啟動，總計 ${urls.length} 筆`, 'success');
+        const startTimeOverall = Date.now();
+
+        for (let i = 0; i < urls.length; i++) {
+            // 檢查是否被按了停止
+            if (!isRunning) {
+                addLog("🚫 程式已暫停運行。", "error");
+                break;
+            }
+
+            const currentUrl = urls[i];
+            const currentIndex = startNum + i;
+            const splitTarget = "="; 
+            const currentUrlId = currentUrl.substring(currentUrl.indexOf(splitTarget) + 1);
+            const singleStartTime = Date.now();
+
+            statusDisplay.innerText = `正在下載 ${currentIndex} / ${urls.length}`;
+            addLog(`>>> ⏳ 開始處理第 ${currentIndex} 筆...`);
+            addLog(`影片識別碼為：${currentUrlId}`)
+
+            try {
+                // 模擬點擊下載
+                const a = document.createElement('a');
+                a.href = currentUrl;
+                a.target = '_blank'; 
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                const endTime = Date.now();
+                const duration = ((endTime - singleStartTime) / 1000).toFixed(1);
+                addLog(`>>> ✅ 第 ${currentIndex} 筆指令已發送 (耗時 ${duration}s)`, 'success');
+
+                if (currentIndex === urls.length) break;
+
+                // sleep 延遲邏輯
+
+                let waitTime = (currentIndex % bigSleepAmount === 0) ? getRandom(bigSleepStart, bigSleepEnd) : getRandom(smallSleepStart, smallSleepEnd);
+                const delayType = (currentIndex % bigSleepAmount === 0) ? "大休息" : "隨機延遲";
+                
+                
+                addLog(`💤 ${delayType}：等待 ${waitTime} 秒...`, 'warn');
+
+                for (let s = waitTime; s > 0; s--) {
+                    if (!isRunning) break; // 倒數中也要能隨時中斷
+                    statusDisplay.innerText = `休息中...剩餘 ${s} 秒 (下一筆：${currentIndex + 1})`;
+                    await sleep(1000);
+                }
+
+            } catch (err) {
+                addLog(`❌ 第 ${currentIndex} 筆異常: ${err.message}`, 'error');
+            }
+        }
+
+        const totalDurationMin = ((Date.now() - startTimeOverall) / 60000).toFixed(1);
+        addLog(`🏁 任務結束。總計耗時：${totalDurationMin} 分鐘`, 'success');
+        
+        statusDisplay.innerText = isRunning ? "目前狀態：任務完成" : "目前狀態：手動中止";
+        isRunning = false;
+        startBtn.disabled = false;
+        stopBtn.style.display = "none";
+    };
+</script>
+
+</body>
+</html>
