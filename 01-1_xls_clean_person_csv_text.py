@@ -12,15 +12,20 @@ OUTPUT_DIR = r"ignore/ouput/todo_list_person"
 
 SELECTED_COLUMNS = [
     'creation_time',
-    'post_owner.id',
+    'modified_time',
     'post_owner.name',
     'post_owner.username',
     'id',
     'media_id',
-    'tags'
-
+    "statistics.comment_count",
+    "statistics.like_count",
+    "statistics.views",
+    "text",
+    "duration",
+    "tags"
 ]
 
+#{"oldwangwang"}
 # 指定帳號清單
 TARGET_NAMES = {
         "yga0721","joemanweng","fumeancat","khshu_","elephant_gogo",
@@ -32,7 +37,7 @@ TARGET_NAMES = {
         "thedodomen","huangbrotherss","weiteng0710","linda831212","87acup",
         "k3okii","energydessert2019","thetiffanychen","annie72127",
         "shasha77.daily","helloiamhook","muyao4","dannybeeech",
-        "lynnwu0219_2","hahatai_official","dinter_1126","peter_and_susan",
+        "lynnwu0219_2","hahatai_official","dinteroffical","peter_and_susan",
         "hanhanpovideo","allie.liao","nickwang1988","tsaigray2018",
         "ruruspiano","achusan0817","achu08177","da_chien_huang",
         "goodalicia","beauty___wu","coindevanity","peeta.gege",
@@ -70,7 +75,7 @@ TARGET_NAMES = {
         "sunnie_cat0111","goris.sky","lebaby0v0","byleway",
         "nowyouon","0_shufen","momanddad_band","maygobla",
         "kai_makeup_","skauramomo","ninggoose","anjouclever",
-        "linzin.yt","thechef_fred","hsin0126"
+        "linzin.yt","thechef_fred","hsin0126","dinter_1126"
     }
 
 # ===============================
@@ -112,6 +117,8 @@ def process_pipeline():
         # 轉換時間（假設為 ISO 或 UTC）
         df['creation_time'] = pd.to_datetime(df['creation_time'], utc=True)
         df['creation_time_tw'] = df['creation_time'].dt.tz_convert(taiwan_tz)
+        df['modified_time'] = pd.to_datetime(df['modified_time'], utc=True)
+        df['modified_time_tw'] = df['modified_time'].dt.tz_convert(taiwan_tz)
 
         # 篩選 2025 年
         df = df[
@@ -119,16 +126,6 @@ def process_pipeline():
             (df['creation_time_tw'] <= end_time)
         ]
 
-        # ===============================
-        # 🔥 新增：只保留 tags 有值的資料
-        # ===============================
-        df = df[
-            df['tags'].notna() &
-            (df['tags'].astype(str).str.strip() != "")
-        ]
-
-
-        # 轉換最終dataframe
         if not df.empty:
             df_list.append(df)
 
