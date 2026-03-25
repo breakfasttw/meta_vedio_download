@@ -2,7 +2,7 @@ import os
 import glob
 import csv
 
-def count_csv_rows(input_dir, split_token="_20260302115844"):
+def count_csv_rows(input_dir, split_token="_20260302151127"):
 
     all_files = glob.glob(os.path.join(input_dir, "*.csv"))
 
@@ -29,7 +29,7 @@ def count_csv_rows(input_dir, split_token="_20260302115844"):
         results.append((name, row_count))
 
     # 輸出總清單
-    output_path = os.path.join(input_dir, "total_vedio_task.csv")
+    output_path = os.path.join(input_dir, "total_vedio_task2.csv")
 
     with open(output_path, 'w', newline='', encoding='utf-8-sig') as f:
         writer = csv.writer(f)
@@ -40,5 +40,5 @@ def count_csv_rows(input_dir, split_token="_20260302115844"):
 
 
 if __name__ == "__main__":
-    input_folder = r"ignore\ouput\todo_list_person"
+    input_folder = r"ignore\2025_realFinal_modifyTime"
     count_csv_rows(input_folder)
