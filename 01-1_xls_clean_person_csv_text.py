@@ -27,7 +27,7 @@ SELECTED_COLUMNS = [
 
 #{"oldwangwang"}
 # 指定帳號清單
-TARGET_NAMES = { "oldwangwang"}
+TARGET_NAMES = { "ackj0301_ifbbpro"}
     #     "yga0721","joemanweng","fumeancat","khshu_","elephant_gogo",
     #     "1006nk","howhowhasfriends","pansci","nanaciaociao","arielsvlog_816",
     #     "basil_77777","minikiki_0529","rayduenglish","ladyflavor",
@@ -75,7 +75,7 @@ TARGET_NAMES = { "oldwangwang"}
     #     "sunnie_cat0111","goris.sky","lebaby0v0","byleway",
     #     "nowyouon","0_shufen","momanddad_band","maygobla",
     #     "kai_makeup_","skauramomo","ninggoose","anjouclever",
-    #     "linzin.yt","thechef_fred","hsin0126","dinter_1126",
+    #     "linzin.yt","thechef_fred","hsin0126","dinter_1126", "oldwangwang"
     # }
 
 # ===============================

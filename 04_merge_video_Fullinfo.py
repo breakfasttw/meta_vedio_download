@@ -5,9 +5,9 @@ import glob
 # ==========================================
 # 參數編輯區域
 # ==========================================
-DIR_A = r'T:\Code\Task\meta_vedio_download\ignore\ouput\todo_list_person\2025_200fullinfo'          # 資料夾 A 路徑
-DIR_B = r'C:\Users\tiffa\Downloads\2025_realFinal_modifyTime_new\2025_realFinal_modifyTime_new2'          # 資料夾 B 路徑
-FILE_C = r'C:\Users\tiffa\Downloads\2025_realFinal_modifyTime_new\all_videos_final_report.csv' # 檔案 C 的路徑
+DIR_A = r'T:\Code\Task\meta_vedio_download\ignore\ouput\todo_list_person\2025_200fullinfo\new'          # 有影片長度 text 的 csv
+DIR_B = r'T:\Code\Task\meta_vedio_download\ignore\2025_realFinal_modifyTime_new2'          # 有 shortcode 的csv
+FILE_C = r'T:\Code\Task\meta_vedio_download\ignore\all_videos_final_report.csv' # 顯示資料有無轉檔成功的 csv
 OUTPUT_DIR = r'Output\VideoInfo'       # 輸出資料夾路徑
 # ==========================================
 

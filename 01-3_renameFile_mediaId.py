@@ -10,7 +10,7 @@ from datetime import datetime
 from collections import Counter
 
 # ======================== 輸入影片檔案資料夾路徑=====================
-input_dir = r"C:\Users\tiffa\Downloads\tsaibrotherderboofan"
+input_dir = r"T:\IG_Video\ackj0301_ifbbpro"
 # ===================================================================
 
 def format_timestamp(ts_str):
